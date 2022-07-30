@@ -1,0 +1,671 @@
+<div id="create-invoice">
+    <div style="height: 100%">
+        <div class="d-flex align-center justify-space-between py-4 px-5" style="
+                position: fixed;
+                width: 100%;
+                background-color: #ffffffff;
+                z-index: 99;
+            ">
+            <nuxt-link to="/home" class="text-decoration-none">
+                <div class="d-flex align-center">
+                    <v-icon color="#3C5CAE"> mdi-chevron-left </v-icon>
+                    <p class="mb-0 contentMain font-weight-bold">Back</p>
+                </div>
+            </nuxt-link>
+            <div>
+                <p class="mb-0 contentMain fsize-18 font-weight-bold">
+                    Edit Invoice
+                </p>
+            </div>
+
+            <div></div>
+        </div>
+        <div class="bgGrey pt-16 px-4 pb-16 mb-6" style="height: 100%">
+            <v-card color="#ffffff" class="elevation-0" rounded>
+                <div class="py-4 px-3 d-flex align-center justify-space-between">
+                    <div>
+                        <p class="mb-0 contentSubtitle fsize-13 font-weight-bold text-uppercase">
+                            Business Info
+                        </p>
+                    </div>
+                    <div>
+                        <div v-if="invoice.paymentStatus === 'overdue'">
+                            <div class="bgOverdue px-2">
+                                <span>Overdue</span>
+                            </div>
+                        </div>
+                        <div v-if="invoice.paymentStatus === 'draft'">
+                            <div class="bgDraft px-2">
+                                <span>Draft</span>
+                            </div>
+                        </div>
+                        <div v-if="invoice.paymentStatus === 'paid'">
+                            <div class="bgPaid px-2">
+                                <span>Paid</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <v-divider></v-divider>
+                <div class="pa-3 d-flex align-center justify-space-between">
+                    <div class="d-flex align-center">
+                        <v-img :src="getImage()" alt="" width="40px" height="40px" class="rounded-xl"></v-img>
+                        <div class="ml-2">
+                            <p class="mb-0 contentMain fsize-15 font-weight-bold font-weight-bold">
+                                {{company.name}}
+                            </p>
+                            <p class="mb-0 contentSubtitle fisze-14">
+                                {{company.phoneNumber}}
+                            </p>
+                        </div>
+                    </div>
+                    <!-- <div class="d-flex align-center">
+                        <p class="mb-0 fsize-15 contentBrand">Edit</p>
+                        <v-icon color="#3C5CAE" class="ml-2" size="20">
+                            mdi-square-edit-outline
+                        </v-icon>
+                    </div> -->
+                </div>
+            </v-card>
+            <v-card color="#ffffff" class="elevation-0 mt-4" rounded>
+                <div class="py-4 px-3">
+                    <div>
+                        <p class="mb-0 contentSubtitle fsize-13 font-weight-bold text-uppercase">
+                            Invoice Info
+                        </p>
+                    </div>
+                </div>
+                <v-divider></v-divider>
+                <div class="mt-3 px-3">
+                    <div class="d-flex align-center justify-space-between">
+                        <p class="mb-0 contentMain fsize-15">Invoice Number</p>
+                        <div id="hideBottomInput" style="width: 140px">
+                            <v-text-field dense outlined placeholder="Enter here..." class="hide-outlined-textfield"
+                                v-debounce:2000ms="onUpdateInvoice" v-model="invoice.invoiceNumber">
+                            </v-text-field>
+                        </div>
+                    </div>
+                    <v-divider class="mt-3"></v-divider>
+                </div>
+                <div class="mt-3 px-3">
+                    <div class="d-flex align-center justify-space-between">
+                        <p class="mb-0 contentMain fsize-15">Invoice Name</p>
+                        <div id="hideBottomInput" style="width: 140px">
+                            <v-text-field dense outlined placeholder="Enter here..." class="hide-outlined-textfield"
+                                v-debounce:2000ms="onUpdateInvoice" v-model="invoice.invoiceName">
+                            </v-text-field>
+                        </div>
+                    </div>
+                    <v-divider class="mt-3"></v-divider>
+                </div>
+                <div class="mt-3 px-3">
+                    <div class="d-flex align-center justify-space-between">
+                        <p class="mb-0 contentMain fsize-15">Create date</p>
+                        <div id="hideBottomInput" class="dateInvoice" style="width: 140px">
+                            <v-menu nudge-left="140px" v-model="menuCreateDate" :close-on-content-click="false"
+                                transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field outlined class="hide-outlined-textfield"
+                                        v-model="computedCreateDateFormatted" hint="MM/DD/YYYY format" persistent-hint
+                                        prepend-icon="mdi-calendar" readonly placeholder="Enter Date..." v-bind="attrs"
+                                        v-on="on"></v-text-field>
+                                </template>
+                                <v-date-picker v-model="invoice.createDate" no-title @input="menuCreateDate = false">
+                                </v-date-picker>
+                            </v-menu>
+                        </div>
+                    </div>
+                    <v-divider class="mt-3"></v-divider>
+                </div>
+                <div class="mt-3 px-3">
+                    <div class="d-flex align-center justify-space-between pb-3">
+                        <p class="mb-0 contentMain fsize-15">Due date</p>
+                        <div id="hideBottomInput" class="dateInvoice" style="width: 140px">
+                            <v-menu nudge-left="140px" v-model="menuDueDate" :close-on-content-click="false"
+                                transition="scale-transition" offset-y max-width="290px" min-width="auto">
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field outlined class="hide-outlined-textfield"
+                                        v-model="computedDueDateFormatted" hint="MM/DD/YYYY format" persistent-hint
+                                        prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"
+                                        placeholder="Enter Date..."></v-text-field>
+                                </template>
+                                <v-date-picker v-model="invoice.dueDate" no-title @input="menuDueDate = false"
+                                    v-debounce:2000ms="onUpdateInvoice">
+                                </v-date-picker>
+                            </v-menu>
+                        </div>
+                    </div>
+                </div>
+            </v-card>
+            <v-card color="#ffffff" class="elevation-0 mt-4" rounded>
+                <div class="py-4 px-3">
+                    <div>
+                        <p class="mb-0 contentSubtitle fsize-13 font-weight-bold text-uppercase">
+                            Client
+                        </p>
+                    </div>
+                </div>
+                <v-divider></v-divider>
+                <div class="mt-3 px-3">
+                    <div class="d-flex align-center justify-space-between">
+                        <p class="mb-0 contentMain fsize-15">Client Name</p>
+                        <div id="hideBottomInput" style="width: 140px">
+                            <v-text-field dense outlined placeholder="Enter here..." class="hide-outlined-textfield"
+                                v-debounce:2000ms="onUpdateInvoice" v-model="invoice.clientName">
+                            </v-text-field>
+                        </div>
+                    </div>
+                    <v-divider class="mt-3"></v-divider>
+                </div>
+                <div class="mt-3 px-3">
+                    <div class="d-flex align-center justify-space-between pb-3">
+                        <p class="mb-0 contentMain fsize-15">Phone Number</p>
+                        <div id="hideBottomInput" style="width: 140px">
+                            <v-text-field dense outlined placeholder="Enter here..." class="hide-outlined-textfield"
+                                v-debounce:2000ms="onUpdateInvoice" v-model="invoice.phoneNumber">
+                            </v-text-field>
+                        </div>
+                    </div>
+                </div>
+            </v-card>
+            <v-card color="#ffffff" class="elevation-0 mt-4" rounded>
+                <div class="py-4 px-3 d-flex align-center justify-space-between">
+                    <div>
+                        <p class="mb-0 contentSubtitle fsize-13 font-weight-bold text-uppercase">
+                            Item
+                        </p>
+                    </div>
+                    <div>
+                        <p class="mb-0 contentSubtitle fsize-13 font-weight-bold text-uppercase">
+                            Price
+                        </p>
+                    </div>
+                </div>
+                <v-divider></v-divider>
+                <div class="px-3 pb-2">
+                    <div v-for="(item, i) in invoice.items" :key="i" class="pt-3">
+                        <div class="d-flex align-center justify-space-between" @click="openDialoEditItem(item, i)">
+                            <div class="d-flex">
+                                <div class="bgGrey pa-1" style="border-radius: 4px; height: 20px">
+                                    <p class="mb-0 contentBrand fsize-11">
+                                        {{ i + 1 }}
+                                    </p>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="mb-0 contentMain fsize-15 font-weight-bold">
+                                        {{ item.name }}
+                                    </p>
+                                    <div>
+                                        <span class="contentSubtitle fsize-14">
+                                            Quantity: {{ item.quantity }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="mb-0 contentMain fsize-15 font-weight-bold">
+                                    ${{ item.price }}
+                                </p>
+                            </div>
+                        </div>
+                        <v-divider class="mt-3"></v-divider>
+                    </div>
+                    <v-btn text block class="mt-2">
+                        <div class="d-flex align-center" @click="dialogAddItem = true">
+                            <v-icon color="#3C5CAE" size="20">
+                                mdi-plus
+                            </v-icon>
+                            <p class="ml-2 contentBrand font-weight-bold mb-0">
+                                Add Item
+                            </p>
+                        </div>
+                    </v-btn>
+                </div>
+            </v-card>
+            <v-card color="#ffffff" class="elevation-0 mt-4" rounded>
+                <div class="py-4 px-3">
+                    <div>
+                        <p class="mb-0 contentSubtitle fsize-13 font-weight-bold text-uppercase">
+                            Payment
+                        </p>
+                    </div>
+                </div>
+                <v-divider></v-divider>
+                <div class="mt-3 px-3">
+                    <v-row no-gutters>
+                        <v-col cols="12" class="d-flex align-center">
+                            <v-col cols="7">
+                                <p class="mb-0 contentMain fsize-15 text-end">
+                                    Subtotal
+                                </p>
+                            </v-col>
+                            <v-col cols="5">
+                                <div>
+                                    <div class="d-flex justify-end mb-1">
+                                        <v-icon color="#8F9499" size="16" v-if="!priceSubTotal || priceSubTotal == 0">
+                                            mdi-currency-usd
+                                        </v-icon>
+                                        <p class="contentMain mb-0 fsize-15 font-weight-bold" v-else>
+                                            ${{ priceSubTotal }}
+                                        </p>
+                                    </div>
+                                    <v-divider></v-divider>
+                                </div>
+                            </v-col>
+                        </v-col>
+                        <v-col cols="12" class="d-flex align-center" @click="openDialogEditPayment('discount')">
+                            <v-col cols="7">
+                                <div class="d-flex align-center justify-end">
+                                    <p class="mb-0 contentMain fsize-15 text-end">
+                                        Discount
+                                        <span v-if="payment.discount != 0">
+                                            ({{percentDiscount}}%)
+                                        </span>
+                                    </p>
+                                    <v-icon class="ml-1" color="#3C5CAE">
+                                        mdi-square-edit-outline
+                                    </v-icon>
+                                </div>
+                            </v-col>
+                            <v-col cols="5">
+                                <div>
+                                    <div class="d-flex justify-end mb-1">
+                                        <v-icon color="#8F9499" size="16" v-if="payment.discount == 0">
+                                            mdi-currency-usd
+                                        </v-icon>
+                                        <div v-else>
+                                            <p class="mb-0 contentGreen">
+                                                - ${{payment.discount}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!-- <p
+                                        class="fsize-15 mb-0 text-end contentSubtitle"
+                                    >
+                                        %
+                                    </p> -->
+                                    <v-divider></v-divider>
+                                </div>
+                            </v-col>
+                        </v-col>
+                        <v-col cols="12" class="d-flex align-center" @click="openDialogEditPayment('shipping')">
+                            <v-col cols="7">
+                                <div class="d-flex align-center justify-end">
+                                    <p class="mb-0 contentMain fsize-15 text-end">
+                                        Shipping
+                                        <span v-if="payment.shipping != 0">
+                                            ({{percentShipping}}%)
+                                        </span>
+                                    </p>
+                                    <v-icon class="ml-1" color="#3C5CAE">
+                                        mdi-square-edit-outline
+                                    </v-icon>
+                                </div>
+                            </v-col>
+                            <v-col cols="5">
+                                <div>
+                                    <div class="d-flex justify-end mb-1">
+                                        <v-icon color="#8F9499" size="16" v-if="payment.shipping == 0">
+                                            mdi-currency-usd
+                                        </v-icon>
+                                        <div v-else>
+                                            <p class="mb-0 contentRed">
+                                                + ${{payment.shipping}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <v-divider></v-divider>
+                                </div>
+                            </v-col>
+                        </v-col>
+                        <v-col cols="12" class="d-flex align-center" @click="openDialogEditPayment('tax')">
+                            <v-col cols="7">
+                                <div class="d-flex align-center justify-end">
+                                    <p class="mb-0 contentMain fsize-15 text-end">
+                                        Tax
+                                        <span v-if="payment.tax != 0">
+                                            ({{percentTax}}%)
+                                        </span>
+                                    </p>
+                                    <v-icon class="ml-1" color="#3C5CAE">
+                                        mdi-square-edit-outline
+                                    </v-icon>
+                                </div>
+                            </v-col>
+                            <v-col cols="5">
+                                <div>
+                                    <div class="d-flex justify-end mb-1">
+                                        <v-icon color="#8F9499" size="16" v-if="payment.tax == 0">
+                                            mdi-currency-usd
+                                        </v-icon>
+                                        <div v-else>
+                                            <p class="mb-0 contentRed">
+                                                + ${{payment.tax}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <v-divider></v-divider>
+                                </div>
+                            </v-col>
+                        </v-col>
+                        <v-col cols="12" class="d-flex align-center">
+                            <v-col cols="7">
+                                <p class="mb-0 contentMain fsize-15 text-end font-weight-bold">
+                                    Total
+                                </p>
+                            </v-col>
+                            <v-col cols="5">
+                                <div>
+                                    <div class="d-flex justify-end mb-1">
+                                        <v-icon color="#8F9499" size="16" v-if="priceTotal == 0">
+                                            mdi-currency-usd
+                                        </v-icon>
+                                        <div v-else>
+                                            <p class="mb-0 contentMain font-weight-bold">
+                                                ${{priceTotal}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <v-divider></v-divider>
+                                </div>
+                            </v-col>
+                        </v-col>
+                    </v-row>
+                </div>
+            </v-card>
+        </div>
+        <v-row justify="center">
+            <v-dialog v-model="dialogAddItem" fullscreen hide-overlay transition="dialog-bottom-transition">
+                <v-card class="elevation-0">
+                    <div class="d-flex align-center justify-space-between">
+                        <div class="py-4 px-5 d-flex align-center c-pointer" @click="closeDialogAddItem()">
+                            <v-icon color="#3C5CAE"> mdi-chevron-left </v-icon>
+                            <p class="mb-0 contentMain font-weight-bold">
+                                Back
+                            </p>
+                        </div>
+                        <div>
+                            <p class="mb-0 font-weight-bold contentMain">
+                                <span v-if="!editItem">
+                                    Add Item
+                                </span>
+                                <span v-else>
+                                    Edit Item
+                                </span>
+                            </p>
+                        </div>
+                        <div class="px-5 d-flex align-center">
+                            <p class="mb-0 contentBrand font-weight-bold" v-if="!editItem" @click="onAddItem()">
+                                Save
+                            </p>
+                            <p v-else class="contentRed font-weight-bold mb-0" @click="onDelete()">
+                                Delete
+                            </p>
+                            </p>
+                        </div>
+                    </div>
+                    <v-divider></v-divider>
+                    <div class="pt-3" v-if="!editItem">
+                        <div class="px-3">
+                            <div class="d-flex align-center justify-space-between">
+                                <p class="mb-0 contentMain fsize-15">
+                                    Item Name
+                                </p>
+                                <div id="hideBottomInput" style="width: 140px">
+                                    <v-text-field v-model="addItem.itemName" dense outlined placeholder="Enter here..."
+                                        class="hide-outlined-textfield">
+                                    </v-text-field>
+                                </div>
+                            </div>
+                            <v-divider class="mt-3"></v-divider>
+                        </div>
+                        <div class="mt-3 px-3">
+                            <div class="d-flex align-center justify-space-between">
+                                <p class="mb-0 contentMain fsize-15">Price</p>
+                                <div id="hideBottomInput" style="width: 140px">
+                                    <v-text-field v-model.number="addItem.price" dense append-icon="mdi-currency-usd"
+                                        outlined placeholder="Enter here..." class="hide-outlined-textfield">
+                                    </v-text-field>
+                                </div>
+                            </div>
+                            <v-divider class="mt-3"></v-divider>
+                        </div>
+                        <div class="mt-3 px-3">
+                            <div class="d-flex align-center justify-space-between">
+                                <p class="mb-0 contentMain fsize-15">
+                                    Quantity
+                                </p>
+                                <div id="hideBottomInput" style="width: 140px">
+                                    <v-text-field v-model.number="addItem.quantity" dense outlined
+                                        placeholder="Enter here..." class="hide-outlined-textfield">
+                                    </v-text-field>
+                                </div>
+                            </div>
+                            <v-divider class="mt-3"></v-divider>
+                        </div>
+                    </div>
+                    <div class="pt-3" v-else>
+                        <div class="px-3">
+                            <div class="d-flex align-center justify-space-between">
+                                <p class="mb-0 contentMain fsize-15">
+                                    Item Name
+                                </p>
+                                <div id="hideBottomInput" style="width: 140px">
+                                    <v-text-field v-model="editItem.itemName" dense outlined placeholder="Enter here..."
+                                        class="hide-outlined-textfield">
+                                    </v-text-field>
+                                </div>
+                            </div>
+                            <v-divider class="mt-3"></v-divider>
+                        </div>
+                        <div class="mt-3 px-3">
+                            <div class="d-flex align-center justify-space-between">
+                                <p class="mb-0 contentMain fsize-15">Price</p>
+                                <div id="hideBottomInput" style="width: 140px">
+                                    <v-text-field v-model.number="editItem.price" dense append-icon="mdi-currency-usd"
+                                        outlined placeholder="Enter here..." class="hide-outlined-textfield">
+                                    </v-text-field>
+                                </div>
+                            </div>
+                            <v-divider class="mt-3"></v-divider>
+                        </div>
+                        <div class="mt-3 px-3">
+                            <div class="d-flex align-center justify-space-between">
+                                <p class="mb-0 contentMain fsize-15">
+                                    Quantity
+                                </p>
+                                <div id="hideBottomInput" style="width: 140px">
+                                    <v-text-field v-model.number="editItem.quantity" dense outlined
+                                        placeholder="Enter here..." class="hide-outlined-textfield">
+                                    </v-text-field>
+                                </div>
+                            </div>
+                            <v-divider class="mt-3"></v-divider>
+                        </div>
+                    </div>
+                </v-card>
+            </v-dialog>
+        </v-row>
+
+        <v-row justify="center">
+            <v-dialog v-model="dialogEditPayment" persistent max-width="380">
+                <v-card class="pt-7 px-4">
+                    <div>
+                        <p class="mb-0 fsize-18 contentMain font-weight-bold text-uppercase">
+                            {{ textTileEditPayment }} Type
+                        </p>
+                        <v-divider class="my-3"></v-divider>
+                        <div class="bgGrey pa-1 d-flex align-center justify-space-between rounded-lg">
+                            <div class="py-2 px-3 d-flex justify-center" @click="activeButton = 1" style="width: 33%"
+                                :class="
+                                    activeButton === 1
+                                        ? 'paymentButtonActive'
+                                        : ''
+                                ">
+                                <span class="fsize-13 contentBrand text-capitalize">
+                                    No {{textTileEditPayment}}
+                                </span>
+                            </div>
+                            <div class="py-2 px-3 d-flex justify-center" @click="activeButton = 2" style="width: 33%"
+                                v-if="textTileEditPayment !== 'tax'" :class="
+                                    activeButton === 2
+                                        ? 'paymentButtonActive'
+                                        : ''
+                                ">
+                                <span class="fsize-13 contentBrand">
+                                    Percent
+                                </span>
+                            </div>
+                            <div class="py-2 px-3 d-flex justify-center" @click="activeButton = 3" style="width: 33%"
+                                :class="
+                                    activeButton === 3
+                                        ? 'paymentButtonActive'
+                                        : ''
+                                ">
+                                <span class="fsize-13 contentBrand">
+                                    Flat
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="my-3" id="hideBottomInput" v-if="activeButton !== 1">
+                        <v-text-field class="border-textfield" v-model.number="valuePayment" placeholder="Enter Amount"
+                            dense outlined :append-icon="
+                                activeButton === 2
+                                    ? 'mdi-percent-outline'
+                                    : 'mdi-currency-usd'
+                            " background-color="#FFFFFF"></v-text-field>
+                    </div>
+                    <div class="mt-3" v-if="textTileEditPayment !== 'tax' && textTileEditPayment !== 1">
+                        <div class="d-flex align-center" v-if="textTileEditPayment === 'tax'">
+                            <v-icon :color="isExclusive == true ? '#3C5CAE' : ''" @click="isExclusive = true">
+                                {{isExclusive == true ? 'mdi-check-circle' : 'mdi-checkbox-blank-circle-outline'}}
+                            </v-icon>
+                            <div class="ml-3">
+                                <span class="fsize-15 contentMain">
+                                    Exclusive
+                                </span>
+                            </div>
+                        </div>
+                        <div class="d-flex align-center mt-2" v-if="textTileEditPayment === 'tax'">
+                            <v-icon :color="isExclusive == false ? '#3C5CAE' : ''" @click="isExclusive = false">
+                                {{isExclusive == false ? 'mdi-check-circle' : 'mdi-checkbox-blank-circle-outline'}}
+                            </v-icon>
+                            <div class="ml-3">
+                                <span class="fsize-15 contentMain">
+                                    Inclusive
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <v-divider class="mt-4"></v-divider>
+                    <v-card-actions class="px-0 py-4 d-flex align-center justify-space-between">
+                        <v-btn color="#3C5CAE" outlined class="px-10" @click="dialogEditPayment = false">
+                            <p class="mb-0 font-weight-bold contentBrand">
+                                Cancel
+                            </p>
+                        </v-btn>
+                        <v-btn color="#3C5CAE" class="px-10 ml-4 elevation-0 white--text" @click="onConfirmPayment()">
+                            <p class="mb-0 font-weight-bold">
+                                Confirm
+                            </p>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-row>
+        <div style="bottom: 0;left: 0px; position: fixed; width: 100%; z-index: 99;background:#FFFFFF;">
+            <div class="py-3 px-3 d-flex align-center justify-space-between">
+                <div style="width: 25%">
+                    <nuxt-link :to="`/home/preview-invoice/${invoice._id}`"
+                        class="d-flex justify-center text-decoration-none">
+                        <div>
+                            <div class="d-flex justify-center">
+                                <v-icon color="#3C5CAE">
+                                    mdi-eye-outline
+                                </v-icon>
+                            </div>
+                            <p class="mb-0 mt-1 text-center fsize-11 contentMain">
+                                Preview
+                            </p>
+                        </div>
+                    </nuxt-link>
+                </div>
+                <div @click="changePaid('paid')" style="width: 25%"
+                    v-if="invoice.paymentStatus == 'draft' || invoice.paymentStatus == 'overdue'">
+                    <div class="d-flex justify-center">
+                        <v-icon color="#3C5CAE">
+                            mdi-file-check-outline
+                        </v-icon>
+                    </div>
+                    <p class="mb-0 mt-1 text-center fsize-11 contentMain">
+                        Mark Paid
+                    </p>
+                </div>
+                <div @click="changePaid('overdue')" v-else style="width: 25%">
+                    <div class="d-flex justify-center">
+                        <v-icon color="#3C5CAE">
+                            mdi-file-check-outline
+                        </v-icon>
+                    </div>
+                    <p class="mb-0 mt-1 text-center fsize-11 contentMain">
+                        Mark Unpaid
+                    </p>
+                </div>
+                <div style="width: 25%">
+                    <div class="d-flex justify-center" @click="sheetChooseColor = true">
+                        <div style="border-radius:4px; height: 24px;width: 24px"
+                            :style="`background-color: ${invoice.color}`">
+
+                        </div>
+                    </div>
+                    <p class="mb-0 mt-1 text-center fsize-11 contentMain">
+                        Invoice Color
+                    </p>
+                </div>
+                <div style="width: 25%" @click="onSelectImageShare()">
+                    <div class="d-flex justify-center">
+                        <v-icon color="#3C5CAE">
+                            mdi-share-variant-outline
+                        </v-icon>
+                    </div>
+                    <p class="mb-0 mt-1 text-center fsize-11 contentMain">
+                        Share
+                    </p>
+                </div>
+                <div class="d-none">
+                    <input type="file" ref="selectImageShare" @change="onChangeImage" accept="image/*">
+                </div>
+            </div>
+        </div>
+        <v-bottom-sheet v-model="sheetChooseColor" content-class="sheet-invoices">
+            <v-sheet class="text-center" height="378px">
+                <div class="pt-6 pb-2">
+                    <p class="mb-0 fsize-18 contentMain text-center font-weight-bold">
+                        Choose Color
+                    </p>
+                </div>
+                <v-divider></v-divider>
+                <div class="px-8">
+                    <div class="d-flex flex-wrap align-center">
+                        <div v-for="(color, i) in listColor" :key="i" style="width: 25%;" class="pt-6"
+                            @click="onChooseColor(color)">
+                            <div style="width: 64px; height: 64px; border-radius: 50%; position: relative;"
+                                :style="`background-color: ${color}`">
+                                <div v-if="invoice.color === color" style="position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    -ms-transform: translate(-50%, -50%);
+                                    transform: translate(-50%, -50%);">
+                                    <v-icon color="#ffffff">
+                                        mdi-check-circle
+                                    </v-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </v-sheet>
+        </v-bottom-sheet>
+    </div>
+</div>

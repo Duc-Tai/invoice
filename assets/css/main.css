@@ -1,0 +1,353 @@
+/* @font-face {
+    font-family: 'NoirPro';
+    src: url(bk.ttf);
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NoirPro';
+    src: url(bk.ttf);
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NoirPro';
+    src: url(bk.ttf);
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NoirPro';
+    src: url(bk.ttf);
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NoirPro';
+    src: url(bk.ttf);
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'NoirPro';
+    src: url(bk.ttf);
+    font-weight: 900;
+    font-style: normal;
+} */
+
+/* @font-face {
+    font-family: PublicSans;
+    src: url('../fonts/PublicSans-Regular.ttf');
+} */
+@font-face {
+    font-family: 'Oxygen';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/oxygen-v15-latin-regular.eot');
+    /* IE9 Compat Modes */
+    src: local(''),
+        url('../fonts/oxygen-v15-latin-regular.eot?#iefix') format('embedded-opentype'),
+        /* IE6-IE8 */
+        url('../fonts/oxygen-v15-latin-regular.woff2') format('woff2'),
+        /* Super Modern Browsers */
+        url('../fonts/oxygen-v15-latin-regular.woff') format('woff'),
+        /* Modern Browsers */
+        url('../fonts/oxygen-v15-latin-regular.ttf') format('truetype'),
+        /* Safari, Android, iOS */
+        url('../fonts/oxygen-v15-latin-regular.svg#Oxygen') format('svg');
+    /* Legacy iOS */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+}
+
+body {
+    background-color: #fafafa;
+    font-family: NoirPro !important;
+    color: #2c2c2cd9;
+}
+
+.v-application {
+    font-family: Oxygen !important;
+}
+
+input {
+    font-family: Oxygen, sans-serif !important;
+}
+
+.v-application .body-1,
+.v-application .caption {
+    font-weight: 400;
+    font-family: Oxygen, sans-serif !important;
+}
+
+.v-application .body-2,
+.v-application .subtitle-1 {
+    font-weight: 400;
+    font-family: Oxygen, sans-serif !important;
+}
+
+.v-application .display-1 {
+    font-weight: 400;
+    font-family: Oxygen, sans-serif !important;
+}
+
+.v-application .headline {
+    font-weight: 400;
+    font-family: Oxygen, sans-serif !important;
+}
+
+.c-pointer {
+    cursor: pointer;
+}
+
+#hideBottomInput .v-input .v-input__control .v-text-field__details,
+.hideBottomInput .v-input .v-input__control .v-text-field__details {
+    display: none;
+}
+
+#hideBottomInput .v-input .v-input__control .v-input__slot {
+    margin-bottom: 0px;
+}
+
+#hideBottomInput .border-textfield .v-input__control .v-input__slot fieldset {
+    border: 1px solid #3C5CAE !important;
+}
+
+#hideBottomInput .hide-outlined-textfield .v-input__slot {
+    min-height: 32px !important;
+}
+
+#hideBottomInput .hide-outlined-textfield .v-input__slot fieldset {
+    border: 1px solid #ffffff !important;
+    border-collapse: none !important;
+    border-color: none !important;
+    border-style: none !important
+}
+
+.dateInvoice .v-input__prepend-outer {
+    display: none !important;
+}
+
+/* Designing for scroll-bar */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: gainsboro;
+    border-radius: 3px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.boxShadow {
+    box-shadow: 0 5px 15px 5px rgb(80 102 224 / 8%);
+}
+
+#tabLeft .v-item-group .v-slide-group__wrapper .v-slide-group__content .v-tab {
+    display: flex;
+    justify-content: left;
+}
+
+#ladichat-widget-frame {
+    bottom: 90px !important;
+    right: 20px !important;
+    border-radius: 12px 12px 0px 0px !important;
+}
+
+#ladichat-widget .is-visible {
+    height: 64% !important
+}
+
+.apexcharts-text {
+    font-size: 14px;
+    font-weight: 700px;
+    color: #2c3e50
+}
+
+.pos-relative {
+    position: relative;
+}
+
+.boxShadow-hover {
+    transition: 0.3s ease-out;
+    box-shadow: 0 5px 15px 5px rgb(80 102 224 / 16%) !important;
+}
+
+.boxShadow-hover:hover {
+    transition: 0.3s ease-out;
+    box-shadow: 0 5px 15px 5px rgb(80 102 224 / 36%) !important;
+}
+
+.v-dialog--active {
+    border-radius: 16px !important;
+}
+
+.v-dialog--active .border-dialog {
+    border-radius: 16px !important;
+}
+
+.header-dialog {}
+
+#custom-alert .v-alert {
+    padding: 8px !important;
+}
+
+#custom-alert .v-icon {
+    font-size: 20 !important
+}
+
+.v-btn {
+    text-transform: none !important;
+}
+
+/* Size */
+.fsize-22 {
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 32px;
+}
+
+.fsize-32 {
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 40px;
+}
+
+.fsize-6 {
+    font-weight: 500;
+    font-size: 6.38928px;
+    line-height: 8px;
+}
+
+.fsize-8 {
+    font-weight: 400;
+    font-size: 8px;
+    line-height: 10px;
+}
+
+.fsize-10 {
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 13px;
+}
+
+.fsize-11 {
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 12px;
+}
+
+.fsize-13 {
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.fisze-14 {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.fsize-15 {
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 22px;
+}
+
+.fisze-17 {
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 22px;
+}
+
+.fisze-18 {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+
+
+/* Color */
+.contentMain {
+    color: #2E251D
+}
+
+.contentSubtitle {
+    color: #8F9499
+}
+
+.contentBrand {
+    color: #3C5CAE
+}
+
+.contentRed {
+    color: #FC6161
+}
+
+.contentGreen {
+    color: #0BD61F
+}
+
+.contentIconMain {
+    color: #54585D
+}
+
+.contentGrey {
+    color: #6F6F84
+}
+
+.bgBrand {
+    color: #3C5CAE
+}
+
+
+/* Background */
+
+.bgGrey {
+    background-color: #F3F5F5;
+}
+
+.bgOverdue {
+    background-color: #fde2e7;
+    color: #fc6161;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+}
+
+.bgDraft {
+    background-color: #f3f5f5;
+    color: #2e251d;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+}
+
+.bgPaid {
+    background-color: #e6f9e6;
+    color: #0bd61f;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+}

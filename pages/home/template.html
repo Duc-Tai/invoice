@@ -1,0 +1,592 @@
+<div id="home" style="height: 100%">
+    <div style="width: 100%;height: 100%;">
+        <div style="padding-top: 80px" class="px-4">
+            <h2 class="white--text fsize-32">
+                Invoice Manager
+            </h2>
+        </div>
+        <div class="mt-4" style="height: 100%;">
+            <v-card height="100%" :style="tab === 2 ? 'background-color: #F3F5F5 !important' :''">
+                <v-tabs v-model="tab" background-color="white" centered>
+                    <v-tabs-slider color="#3C5CAE"></v-tabs-slider>
+                    <div class="d-flex justify-space-between px-7" style="width: 100%">
+                        <v-tab style="padding: 0px 32px" color="#ffffff">
+                            <v-icon color="#54585D">mdi-reorder-horizontal</v-icon>
+                        </v-tab>
+
+                        <v-tab style="padding: 0px 32px" color="#ffffff">
+                            <v-icon color="#54585D">mdi-chart-pie</v-icon>
+                        </v-tab>
+
+                        <v-tab style="padding: 0px 32px" color="#ffffff">
+                            <v-icon color="#54585D">mdi-cog</v-icon>
+                        </v-tab>
+                    </div>
+                </v-tabs>
+                <v-divider class=""></v-divider>
+                <v-tabs-items v-model="tab" class="pt-6">
+                    <v-tab-item>
+                        <v-card flat>
+                            <v-card-text class="px-0 py-0">
+                                <v-menu offset-y :close-on-content-click="false" content-class="menuFilter"
+                                    :nudge-width="100">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn color="#ffffff" v-bind="attrs" v-on="on" class="elevation-0">
+                                            <div class="d-flex align-center">
+                                                <p class="contentBrand fsize-18 mb-0 font-weight-bold">
+                                                    <p class="contentBrand text-capitalize mb-0 font-weight-bold">
+                                                        {{filter}}
+                                                    </p>
+                                                    <p class="contentBrand text-capitalize mb-0 font-weight-bold ml-1">
+                                                        Invoices
+                                                    </p>
+                                                </p>
+                                                <v-icon class="ml-2" color="#3C5CAE" size="16">
+                                                    mdi-chevron-down
+                                                </v-icon>
+                                            </div>
+                                        </v-btn>
+                                    </template>
+                                    <v-card class="elevation-0" rounded>
+                                        <div class="py-1 px-4">
+                                            <p class="mb-0 contentMain fsize-18 font-weight-bold">
+                                                Filter
+                                            </p>
+                                        </div>
+                                        <v-divider></v-divider>
+                                        <div class="my-3 px-6">
+                                            <div class="d-flex align-center">
+                                                <v-icon :color="filter === 'all' ? '#3C5CAE' : ''"
+                                                    @click="filter = 'all'">
+                                                    {{filter === 'all' ? 'mdi-check-circle' : 'mdi-checkbox-blank-circle-outline'}}
+                                                </v-icon>
+                                                <div class="ml-6">
+                                                    <span class="fsize-15 contentMain">
+                                                        All
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-center mt-3">
+                                                <v-icon :color="filter === 'paid' ? '#3C5CAE' : ''"
+                                                    @click="filter = 'paid'">
+                                                    {{filter === 'paid' ? 'mdi-check-circle' : 'mdi-checkbox-blank-circle-outline'}}
+                                                </v-icon>
+                                                <div class="ml-6">
+                                                    <span class="fsize-15 contentMain">
+                                                        Paid
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-center mt-3">
+                                                <v-icon :color="filter === 'overdue' ? '#3C5CAE' : ''"
+                                                    @click="filter = 'overdue'">
+                                                    {{filter === 'overdue' ? 'mdi-check-circle' : 'mdi-checkbox-blank-circle-outline'}}
+                                                </v-icon>
+                                                <div class="ml-6">
+                                                    <span class="fsize-15 contentMain">
+                                                        Overdue
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </v-card>
+                                </v-menu>
+                                <v-divider></v-divider>
+                                <div v-if="!listInvoices.length" class="d-flex align-center justify-center mt-6">
+                                    <div>
+                                        <div class="d-flex align-center">
+                                            <img src="~/assets/images/no-list-invoice.png" alt="" width="196.92px"
+                                                height="160px">
+                                        </div>
+                                        <div class="mt-3">
+                                            <p class="mb-0 contentSubtitle fsize-14">
+                                                Press “+” to create new invoice
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div :class="listInvoices.length > 7 ? 'scrollListInvoice' : ''">
+                                    <v-skeleton-loader class="mx-auto mt-4" max-width="300" type="card"
+                                        v-if="loadingTable">
+                                    </v-skeleton-loader>
+                                    <div v-for="(invoice, i) in listInvoices" :key="i" class="border-bottom-invoices"
+                                        v-else>
+                                        <div class="py-2 px-4" @click="setInvoices(invoice)">
+                                            <div class="d-flex align-center justify-space-between">
+                                                <div v-if="invoice.paymentStatus === 'overdue'">
+                                                    <div class="bgOverdue px-2">
+                                                        <span>Overdue</span>
+                                                    </div>
+                                                </div>
+                                                <div v-if="invoice.paymentStatus === 'draft'">
+                                                    <div class="bgDraft px-2">
+                                                        <span>Draft</span>
+                                                    </div>
+                                                </div>
+                                                <div v-if="invoice.paymentStatus === 'paid'">
+                                                    <div class="bgPaid px-2">
+                                                        <span>Paid</span>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 fsize-15 contentMain font-weight-bold">
+                                                    ${{calcPrice(invoice)}}
+                                                </p>
+                                            </div>
+                                            <div class="mt-3 d-flex align-center justify-space-between">
+                                                <div>
+                                                    <p class="mb-0 fsize-15 contentMain font-weight-bold">
+                                                        {{invoice.clientName}}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <span class="fsize-15 contentSubtitle">
+                                                        #{{invoice.invoiceNumber}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-center justify-space-between">
+                                                <div>
+                                                    <span class="fsize-15 contentSubtitle">
+                                                        Invoice to: {{invoice.invoiceName}}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span class="fsize-15 contentSubtitle">
+                                                        {{invoice.createDate && formatDate(invoice.createDate)}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <v-bottom-sheet v-model="sheet" content-class="sheet-invoices">
+                                    <v-sheet class="text-center" height="378px">
+                                        <div>
+                                            <div class="pt-6 pb-2 px-8 d-flex align-center justify-space-between">
+                                                <div>
+                                                    <p class="mb-0 fsize-15 contentMain font-weight-bold text-start">
+                                                        {{invoices.clientName}}
+                                                    </p>
+                                                    <p class="fsize-22 contentBrand text-start mb-0">
+                                                        ${{calPriceInvoiceDetail}}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <div v-if="invoices.paymentStatus === 'overdue'">
+                                                        <div class="bgOverdue px-2">
+                                                            <span>Overdue</span>
+                                                        </div>
+                                                    </div>
+                                                    <div v-if="invoices.paymentStatus === 'draft'">
+                                                        <div class="bgDraft px-2">
+                                                            <span>Draft</span>
+                                                        </div>
+                                                    </div>
+                                                    <div v-if="invoices.paymentStatus === 'paid'">
+                                                        <div class="bgPaid px-2">
+                                                            <span>Paid</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <v-divider class="pb-3"></v-divider>
+                                            <div class="px-8">
+                                                <div class="d-flex align-center justify-start">
+                                                    <nuxt-link :to="`/home/edit-invoice/${invoices._id}`"
+                                                        class="text-decoration-none">
+                                                        <v-btn text color="#ffffff" class="elevation-0 px-0">
+                                                            <div class="d-flex align-center">
+                                                                <v-icon color="#000000" size="20">
+                                                                    mdi-square-edit-outline
+                                                                </v-icon>
+                                                                <p class="mb-0 fsize-15 contentMain ml-3">
+                                                                    Edit Invoice
+                                                                </p>
+                                                            </div>
+                                                        </v-btn>
+                                                    </nuxt-link>
+                                                </div>
+                                                <v-divider class="my-3"></v-divider>
+                                                <div class="d-flex align-center justify-start">
+                                                    <nuxt-link :to="`/home/preview-invoice/${invoices._id}`"
+                                                        class="text-decoration-none">
+                                                        <v-btn text color="#ffffff" class="elevation-0 px-0">
+                                                            <div class="d-flex align-center">
+                                                                <v-icon color="#000000" size="20">
+                                                                    mdi-clipboard-text-search-outline
+                                                                </v-icon>
+                                                                <p class="mb-0 fsize-15 contentMain ml-3">
+                                                                    Preview
+                                                                </p>
+                                                            </div>
+                                                        </v-btn>
+                                                    </nuxt-link>
+                                                </div>
+                                                <!-- <v-divider class="my-3"></v-divider>
+                                                <div class="d-flex align-center justify-start">
+                                                    <v-btn text color="#ffffff" class="elevation-0 px-0">
+                                                        <div class="d-flex align-center">
+                                                            <v-icon color="#000000" size="20">
+                                                                mdi-check-circle-outline
+                                                            </v-icon>
+                                                            <p class="mb-0 fsize-15 contentMain ml-3">
+                                                                Mark Paid/Unpaid
+                                                            </p>
+                                                        </div>
+                                                    </v-btn>
+                                                </div> -->
+                                                <v-divider class="my-3"></v-divider>
+                                                <div class="d-flex align-center justify-start">
+                                                    <v-btn text color="#ffffff" class="elevation-0 px-0"
+                                                        @click="dialogDelete = true">
+                                                        <div class="d-flex align-center">
+                                                            <v-icon color="#FC6161" size="20">
+                                                                mdi-delete-outline
+                                                            </v-icon>
+                                                            <p class="mb-0 fsize-15 contentMain ml-3 contentRed">
+                                                                Delete
+                                                            </p>
+                                                        </div>
+                                                    </v-btn>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </v-sheet>
+                                </v-bottom-sheet>
+                            </v-card-text>
+                        </v-card>
+                    </v-tab-item>
+                    <v-tab-item>
+                        <v-card flat>
+                            <v-card-text class="px-0 py-0">
+                                <div class="ml-4 pt-2 pb-1">
+                                    <span class="contentMain fsize-18 font-weight-bold ">
+                                        Invoice Report
+                                    </span>
+                                </div>
+                                <v-divider></v-divider>
+                                <div class="py-2 px-4">
+                                    <div>
+                                        <v-card color="#3C5CAE" class="elevation-0 pa-4">
+                                            <p class="mb-0 fsize-15 white--text">
+                                                Total Paid
+                                            </p>
+                                            <p class="mb-0 fsize-17 white--text">
+                                                ${{totalPaid}}
+                                            </p>
+                                        </v-card>
+                                    </div>
+                                    <div class="mt-3">
+                                        <v-row>
+                                            <v-col cols="6" class="pr-1">
+                                                <v-card color="#3CAE69" class="elevation-0 pa-4">
+                                                    <p class="mb-0 fsize-15 white--text">
+                                                        Discount
+                                                    </p>
+                                                    <p class="mb-0 fsize-17 white--text">
+                                                        ${{payloadReport.sumDiscount}}
+                                                    </p>
+                                                </v-card>
+                                            </v-col>
+                                            <v-col cols="6" class="pl-1">
+                                                <v-card color="#FC6161" class="elevation-0 pa-4">
+                                                    <p class="mb-0 fsize-15 white--text">
+                                                        Tax
+                                                    </p>
+                                                    <p class="mb-0 fsize-17 white--text">
+                                                        ${{payloadReport.sumTax}}
+                                                    </p>
+                                                </v-card>
+                                            </v-col>
+                                        </v-row>
+                                    </div>
+                                </div>
+                            </v-card-text>
+                        </v-card>
+                    </v-tab-item>
+                    <v-tab-item>
+                        <v-card class="elevation-0">
+                            <v-card-text class="px-0 py-0">
+                                <div class="ml-4 pt-2 pb-1">
+                                    <span class="contentMain fsize-18 font-weight-bold ">
+                                        Settings
+                                    </span>
+                                </div>
+                                <v-divider></v-divider>
+                                <div class="">
+                                    <div style="background-color: #F3F5F5;" class="pt-1">
+                                        <div class="py-2 px-4">
+                                            <v-card color="#ffffff" class="elevation-0 rounded">
+                                                <div class="py-4 px-3">
+                                                    <p class="mb-0 contentSubtitle fsize-13 text-uppercase">
+                                                        Business info
+                                                    </p>
+                                                </div>
+                                                <v-divider></v-divider>
+                                                <div class="py-3 d-flex justify-center align-center">
+                                                    <div style="height: 66px" class="d-flex align-center">
+                                                        <div v-if="company.image || url" class="d-flex align-center">
+                                                            <img :src="getImage()" alt="" width="32px" height="32px"
+                                                                class="rounded-xl">
+                                                        </div>
+                                                        <div class="ml-2">
+                                                            <p class="mb-0 contentMain fsize-15 font-weight-bold">
+                                                                {{company.name}}
+                                                            </p>
+                                                            <p class="mb-0 contentSubtitle fisze-14">
+                                                                {{company.phoneNumber}}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="d-flex align-center justify-space-between px-3">
+                                                        <p class="mb-0 contentMain fsize-15">
+                                                            Company Name
+                                                        </p>
+                                                        <div id="hideBottomInput" style="width: 140px">
+                                                            <v-text-field dense outlined placeholder="Enter here.."
+                                                                v-debounce:2000ms="updateCompany" v-model="company.name"
+                                                                class="hide-outlined-textfield">
+                                                            </v-text-field>
+                                                        </div>
+                                                    </div>
+                                                    <v-divider class="mt-3"></v-divider>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="d-flex align-center justify-space-between px-3">
+                                                        <p class="mb-0 contentMain fsize-15">
+                                                            Phone
+                                                        </p>
+                                                        <div id="hideBottomInput" style="width: 140px">
+                                                            <v-text-field dense outlined placeholder="Enter here.."
+                                                                v-debounce:2000ms="updateCompany"
+                                                                v-model="company.phoneNumber"
+                                                                class="hide-outlined-textfield">
+                                                            </v-text-field>
+                                                        </div>
+                                                    </div>
+                                                    <v-divider class="mt-3"></v-divider>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="d-flex align-center justify-space-between px-3 pb-3">
+                                                        <p class="mb-0 contentMain fsize-15">
+                                                            Logo
+                                                        </p>
+                                                        <div id="hideBottomInput" style="width: 140px">
+                                                            <div class="d-flex justify-end" @click="onSelectImage()"
+                                                                v-if="!image">
+                                                                <div class="d-flex align-center">
+                                                                    <v-icon size="21" color="#3C5CAE">
+                                                                        far fa-image
+                                                                    </v-icon>
+                                                                    <p class="ml-2 mb-0 bgBrand font-weight-bold">
+                                                                        Upload image
+                                                                    </p>
+                                                                </div>
+
+                                                                <div class="d-none">
+                                                                    <v-file-input v-model="image" ref="selectImage"
+                                                                        accept="image/*" label="File input"
+                                                                        @change="onChangeImage"></v-file-input>
+                                                                </div>
+                                                            </div>
+                                                            <div v-else class="d-flex align-center justify-end">
+                                                                <img :src="url" alt="" width="32px" height="32px"
+                                                                    class="rounded-xl" v-if="url">
+                                                                <div>
+                                                                    <v-btn icon small class="elevation-0 ml-5"
+                                                                        @click="onDeleteImage()">
+                                                                        <v-icon color="red">
+                                                                            mdi-minus-circle
+                                                                        </v-icon>
+                                                                    </v-btn>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </v-card>
+                                            <v-card color="#ffffff" class="elevation-0 rounded mt-4">
+                                                <div class="py-4 px-3">
+                                                    <p class="mb-0 contentSubtitle fsize-13 text-uppercase">
+                                                        Business info
+                                                    </p>
+                                                </div>
+                                                <v-divider></v-divider>
+                                                <div class="mt-3">
+                                                    <div class="d-flex align-center justify-space-between px-3">
+                                                        <p class="mb-0 contentMain fsize-15">
+                                                            Rate our app
+                                                        </p>
+                                                    </div>
+                                                    <v-divider class="mt-3"></v-divider>
+                                                </div>
+                                                <div class="mt-3" @click="dialogPrivacyPolicies = true">
+                                                    <div class="d-flex align-center justify-space-between px-3">
+                                                        <p class="mb-0 contentMain fsize-15">
+                                                            Privacy Policy
+                                                        </p>
+                                                    </div>
+                                                    <v-divider class="mt-3"></v-divider>
+                                                </div>
+                                                <div class="mt-3">
+                                                    <div class="d-flex align-center justify-space-between px-3 pb-3">
+                                                        <p class="mb-0 contentMain fsize-15">
+                                                            Term & Condition
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </v-card>
+                                        </div>
+                                    </div>
+                                </div>
+                            </v-card-text>
+                        </v-card>
+                    </v-tab-item>
+                </v-tabs-items>
+            </v-card>
+        </div>
+        <nuxt-link to="/home/create-invoice" class="text-decoration-none d-flex align-center justify-center"
+            v-if="tab !== 2" id="button-create-invoices">
+            <div>
+                <v-icon color="#ffffff" size="18">
+                    mdi-plus
+                </v-icon>
+            </div>
+        </nuxt-link>
+
+        <v-row justify="center">
+            <v-dialog v-model="dialogDelete" persistent max-width="360">
+                <v-card class="pt-7 px-4">
+                    <div>
+                        <p class="mb-0 fsize-18 contentMain font-weight-bold">
+                            Delete this invoice
+                        </p>
+                        <v-divider class="my-3"></v-divider>
+                        <p class="mb-0 fsize-15 contentMain">
+                            Are you sure want to delete this invoice?
+                            This action cannot redo
+                        </p>
+                    </div>
+                    <v-divider class="mt-4"></v-divider>
+                    <v-card-actions class="px-0 py-4">
+                        <v-spacer></v-spacer>
+                        <div class="d-flex align-center justify-space-between" @click="dialogDelete = false">
+                            <v-btn color="#ffffff" text class="px-8">
+                                <p class="mb-0 font-weight-bold contentMain">
+                                    Cancel
+                                </p>
+                            </v-btn>
+                            <v-btn color="#FC6161" class="px-8 ml-4 elevation-0" @click="onDelete()">
+                                <p class="mb-0 font-weight-bold white--text">
+                                    Delete
+                                </p>
+                            </v-btn>
+                        </div>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-row>
+
+        <v-row justify="center">
+            <v-dialog v-model="dialogPrivacyPolicies" fullscreen hide-overlay transition="dialog-bottom-transition">
+                <v-card class="elevation-0">
+                    <div class="d-flex align-center">
+                        <div class="py-4 px-5 d-flex align-center c-pointer" @click="dialogPrivacyPolicies = false">
+                            <v-icon color="#3C5CAE">
+                                mdi-chevron-left
+                            </v-icon>
+                            <p class="mb-0 contentMain font-weight-bold">
+                                Back
+                            </p>
+                        </div>
+                        <div class="text-center ml-13">
+                            <p class="mb-0 font-weight-bold contentMain">
+                                Privacy Policies
+                            </p>
+                        </div>
+                    </div>
+                    <v-divider></v-divider>
+                    <div class="pt-3" style="background-color: #F3F5F5;">
+                        <div style="max-height: 775px; overflow-y: scroll ">
+                            <p class="mb-0 px-2">
+                                Information We Collect – You directly provide us with most of the information we
+                                collect:
+                                When you register to Business Suite, use it, complete forms, or register to any of our
+                                programs. We also collect information about your communications with Business Suite as
+                                well
+                                as any of your posts on our blogs or forums and your communication with other users of
+                                Business Suite. In addition, we automatically collect information while you access,
+                                browse,
+                                view or otherwise use the Site and receive information from third party vendors or other
+                                available sources.
+
+                                Our Legal Basis for Using Your Personal Information - Where relevant under applicable
+                                laws,
+                                all processing of your personal information will be justified by a "lawful ground" for
+                                processing as detailed below.
+
+                                How Do We Use the Information Collected? – We use personal information to provide you
+                                with
+                                quality service and security, to operate the Site, understand how people use the Site,
+                                and
+                                to perform our obligations to you; to ensure marketplace integrity and security; to
+                                prevent
+                                fraud; to contact you and send you direct marketing communications; to promote and
+                                advertise
+                                the Site, our services and the Business Suite; to comply with lawful requests by public
+                                authorities and to comply with applicable laws and regulations.
+
+                                How Long Do We Keep Personal Information – We will keep personal information only for as
+                                long as is required to fulfil the purpose for which it was collected. However, in some
+                                cases
+                                we will retain personal information for longer periods of time.
+
+                                Sharing Personal Information with Third Parties – We share personal information with
+                                third
+                                parties in order to operate the Site, provide our services to you, fulfil obligations
+                                imposed on us by applicable laws and regulations, and prevent fraud, infringements and
+                                illegal activities.
+
+                                Where We Store Personal Information - Some of the personal information you provide to us
+                                will be stored or processed on our behalf by third party suppliers and data processors
+                                and
+                                may be located in other jurisdictions.
+
+                                Do Not Track (DNT) – Our Site does not respond to Do Not Track (DNT) signals.
+
+                                External Links - the Site contains links to third party sites and if you link to a third
+                                party site from the Site, any data you provide to that site and are not subject to this
+                                Policy.
+
+                                Security – We implement technical and organizational measures to maintain the security
+                                of
+                                the Site and your personal information and in preventing unauthorized access, loss,
+                                misuse,
+                                alteration, destruction or damage to it through industry standard technologies and
+                                internal
+                                procedures.
+
+                                Rights of EU, EEA and UK Users – Where we process personal data related to EU, EEA and
+                                UK
+                                user, further terms apply to our processing in relation to your rights as a data subject
+                                under EU data protection laws, as detailed below.
+
+                                Specific Provisions for California Residents- If you are a California resident, you are
+                                entitled to specific privacy rights as detailed below.
+
+                                Updating Personal Information – We take steps to ensure that the personal information we
+                                collect is accurate and up to date, and we provide you with the opportunity to update
+                                your
+                                information through your account profile settings. In the event that you believe your
+                                information is in any way incorrect or inaccurate, please let us know immediately.
+
+                            </p>
+                        </div>
+                    </div>
+                </v-card>
+            </v-dialog>
+        </v-row>
+    </div>
+</div>

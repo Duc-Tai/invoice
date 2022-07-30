@@ -1,0 +1,188 @@
+<div>
+    <div class="d-flex align-center justify-space-between py-4 px-5" style="
+    position: fixed;
+    width: 100%;
+    background-color: #ffffffff;
+    z-index: 99;
+">
+        <nuxt-link to="/home" class="text-decoration-none">
+            <div class="d-flex align-center">
+                <v-icon color="#3C5CAE"> mdi-chevron-left </v-icon>
+                <p class="mb-0 contentMain font-weight-bold">Back</p>
+            </div>
+        </nuxt-link>
+        <div>
+            <p class="mb-0 contentMain fsize-18 font-weight-bold">
+                Preview
+            </p>
+        </div>
+        <div @click="saveFile()">
+            <div class="d-flex align-center">
+                <p class="mb-0 contentBrand font-weight-bold">Save File</p>
+            </div>
+        </div>
+    </div>
+    <div id="preview-invoice" class="pt-16">
+        <div class="d-flex align-center justify-space-between" :style="`background-color: ${invoice.color}`"
+            style="display: flex; align-items:center; justify-content: space-between; padding: 16px 24px">
+            <div>
+                <p class="mb-0 text-right fsize-15" style="color: #ffffff">
+                    {{company.name}}
+                </p>
+            </div>
+            <!-- <div class="bgLogoPrevew" style="padding: 4px; display: flex; align-items: center">
+                <img :src="getImage()" alt="" width="36px" height="36px" style="border-radius: 50%">
+            </div> -->
+            <div>
+                <p class="mb-0 text-right fsize-15" style="color: #ffffff">
+                    Red Software
+                </p>
+                <p class="mb-0 text-right fsize-13" style="color: #ffffff">
+                    038 - 923 -233
+                </p>
+                <p class="mb-0 text-right fsize-13" style="color: #ffffff">
+                    #254FNG
+                </p>
+                <p class="mb-0 text-right fsize-13" style="color: #ffffff">
+                    Create Date: 12/12/2022
+                </p>
+                <p class="mb-0 text-right fsize-13" style="color: #ffffff">
+                    Due Date: 24/12/2022
+                </p>
+            </div>
+        </div>
+        <div style="padding: 12px 16px">
+            <div>
+                <p class="mb-0 contentGrey fsize-13">
+                    Invoice to:
+                </p>
+                <p class="mb-0 contentMain font-weight-bold fsize-15">
+                    {{invoice.invoiceName ? invoice.invoiceName : 'Do not have'}}
+                </p>
+                <p class="mb-0 fsize-13" style="color: rgba(60, 60, 67, 0.8);">
+                    {{invoice.phoneNumber ? invoice.phoneNumber : 'Do not have'}}
+                </p>
+            </div>
+            <v-divider class="mt-4"></v-divider>
+            <div class="mt-2" style="margin-top: 8px">
+                <p class="mb-0 fsize-13 contentMain font-weight-bold">
+                    Invoice Name: Monthly dues paid
+                </p>
+            </div>
+            <div class="mt-2" style="margin-top: 8px">
+                <v-simple-table style="border: 0.5px solid rgba(0, 0, 0, 0.08);">
+                    <template v-slot:default>
+                        <thead>
+                            <tr>
+                                <th class="text-left" style="background: rgba(60, 92, 174, 0.1); text-align: left;">
+                                    <p class="mb-0 contentMain fsize-11 text-uppercase">
+                                        Item description
+                                    </p>
+                                </th>
+                                <th class="text-left" style="background: rgba(60, 92, 174, 0.1); text-align: left;">
+                                    <p class="mb-0 contentMain fsize-11 text-uppercase">
+                                        Qty
+                                    </p>
+                                </th>
+                                <!-- <th class="text-left" style="background: rgba(60, 92, 174, 0.1); text-align: left;">
+                                    <p class="mb-0 contentMain fsize-11 text-uppercase">
+                                        UNIT PRICE
+                                    </p>
+                                </th> -->
+                                <th class="text-left" style="background: rgba(60, 92, 174, 0.1); text-align: left;">
+                                    <p class="mb-0 contentMain fsize-11 text-uppercase">
+                                        TOTAL
+                                    </p>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, i) in invoice.items" :key="i">
+                                <td>
+                                    <p class="mb-0 fsize-11 contentMain font-weight-bold">
+                                        {{item.itemName}}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 fsize-11 contentMain font-weight-bold">
+                                        {{item.quantity}}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 fsize-11 contentMain font-weight-bold">
+                                        ${{item.price}}
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr class="bgTr">
+                                <td></td>
+                                <td>
+                                    <p class="mb-0 fsize-11 font-weight-bold contentIconMain">
+                                        Sub Total
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 fsize-11 contentMain font-weight-bold">
+                                        ${{priceSubTotal}}
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr class="bgTr">
+                                <td></td>
+                                <td>
+                                    <p class="mb-0 fsize-11 font-weight-bold contentIconMain">
+                                        Discount
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 fsize-11 contentMain font-weight-bold">
+                                        - ${{priceDiscount}}
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr class="bgTr">
+                                <td></td>
+                                <td>
+                                    <p class="mb-0 fsize-11 font-weight-bold contentIconMain">
+                                        Shipping
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 fsize-11 contentMain font-weight-bold">
+                                        ${{priceShipping}}
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr class="bgTr">
+                                <td></td>
+                                <td>
+                                    <p class="mb-0 fsize-11 font-weight-bold contentIconMain">
+                                        Tax
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 fsize-11 contentMain font-weight-bold">
+                                        ${{priceTax}}
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr class="bgTr">
+                                <td></td>
+                                <td>
+                                    <p class="mb-0 fsize-11 font-weight-bold contentMain">
+                                        Total
+                                    </p>
+                                </td>
+                                <td>
+                                    <p class="mb-0 fsize-11 contentMain font-weight-bold">
+                                        ${{totalPrice}}
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </template>
+                </v-simple-table>
+            </div>
+        </div>
+    </div>
+</div>

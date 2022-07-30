@@ -1,0 +1,44 @@
+[
+  {
+    "name": "home",
+    "path": "/home",
+    "component": "C:\\\\Users\\\\Administrator\\\\Documents\\\\GitHub\\\\invoice\\\\pages\\\\home\\\\index.vue",
+    "chunkName": "pages/home/index",
+    "_name": "_4b0faccb"
+  },
+  {
+    "name": "onboaring",
+    "path": "/onboaring",
+    "component": "C:\\\\Users\\\\Administrator\\\\Documents\\\\GitHub\\\\invoice\\\\pages\\\\onboaring\\\\index.vue",
+    "chunkName": "pages/onboaring/index",
+    "_name": "_123ebe85"
+  },
+  {
+    "name": "home-create-invoice",
+    "path": "/home/create-invoice",
+    "component": "C:\\\\Users\\\\Administrator\\\\Documents\\\\GitHub\\\\invoice\\\\pages\\\\home\\\\create-invoice\\\\index.vue",
+    "chunkName": "pages/home/create-invoice/index",
+    "_name": "_275b9b22"
+  },
+  {
+    "name": "home-edit-invoice-id",
+    "path": "/home/edit-invoice/:id?",
+    "component": "C:\\\\Users\\\\Administrator\\\\Documents\\\\GitHub\\\\invoice\\\\pages\\\\home\\\\edit-invoice\\\\_id.vue",
+    "chunkName": "pages/home/edit-invoice/_id",
+    "_name": "_74f8e989"
+  },
+  {
+    "name": "home-preview-invoice-id",
+    "path": "/home/preview-invoice/:id?",
+    "component": "C:\\\\Users\\\\Administrator\\\\Documents\\\\GitHub\\\\invoice\\\\pages\\\\home\\\\preview-invoice\\\\_id.vue",
+    "chunkName": "pages/home/preview-invoice/_id",
+    "_name": "_0ed22e29"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "C:\\\\Users\\\\Administrator\\\\Documents\\\\GitHub\\\\invoice\\\\pages\\\\index.vue",
+    "chunkName": "pages/index",
+    "_name": "_6ad0c68a"
+  }
+]
